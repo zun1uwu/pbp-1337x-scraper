@@ -1,3 +1,4 @@
+#![windows_subsystem = "windows"]
 #![feature(option_result_contains)]
 
 use std::{env, vec, fs::{self, File}, path::Path, io::Write};
