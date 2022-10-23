@@ -9,7 +9,7 @@ fn main() {
     let query: Vec<String> = env::args().collect();
 
     if query.len() < 2 {
-        println!(r#"You must provide a search query, e.g. "php_1337x_scraper gta""#);
+        println!(r#"You must provide a search query, e.g. "php_1337x_scraper 'gta'""#);
         std::process::exit(0);
     }
 
@@ -98,6 +98,4 @@ fn write_to_json(title: String, size: String, magnet: String) {
 
     let mut file = fs::OpenOptions::new().write(true).append(true).open(filepath).unwrap();
     file.write_all(jsoncontent.as_bytes()).unwrap();
-    
-    println!("{}", jsoncontent);
 }
