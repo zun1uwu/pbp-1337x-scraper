@@ -29,6 +29,20 @@ fn main() {
         println!(r"Clearing previous cache.");
         fs::remove_file(filepath).expect("Couldn't delete config file for re-caching");
     }
+
+    fs::create_dir_all(cachedir).expect("Couldn't create config directory");
+    File::create(filepath).expect("Couldn't create config file");
+
+    let mut file = fs::OpenOptions::new()
+        .write(true)
+        .append(true)
+        .open(filepath)
+        .expect("Opening file failed");
+
+    file.write_all(br#"{
+    response: [
+"#)
+        .expect("Couldn't write bytes to file");
     
     let url = format!("https://1337x.to/category-search/{}/Games/1/", query);
 
@@ -54,6 +68,10 @@ fn main() {
     for entry in results {
         scan_page(entry, cachedir);
     }
+
+    file.write_all(br#"    ]
+}"#)
+        .expect("Couldn't write bytes to file");
 }
 
 fn scan_page(url: String, dest_dir: &Path) {
@@ -108,7 +126,7 @@ fn scan_page(url: String, dest_dir: &Path) {
 fn write_to_json(title: String, size: String, magnet: String, dest_dir: &Path) {
     println!("Caching: {}", title);
     let jsoncontent = format!(
-        r#"{{ "title": "{}", "size": "{}", "download": "{}" }}
+        r#"        {{ "title": "{}", "size": "{}", "download": "{}" }}
 "#,
         title, size, magnet
     );
@@ -117,14 +135,6 @@ fn write_to_json(title: String, size: String, magnet: String, dest_dir: &Path) {
     let dir_path = Path::new(&dir_string);
     let file_string = format!(r"{}\1337x_Cache.json", dir_path.display());
     let file_path = Path::new(&file_string);
-
-    if !dir_path.exists() {
-        fs::create_dir_all(dir_path).expect("Couldn't create config directory");
-    }
-
-    if !file_path.exists() {
-        File::create(file_path).expect("Couldn't create config file");
-    }
 
     let mut file = fs::OpenOptions::new()
         .write(true)
