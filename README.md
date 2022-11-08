@@ -3,6 +3,6 @@ HTML Scraper for 1337x fetching metadata about game torrents to be implemented i
 
 Usage: `pbp_1337x_scraper [query] ["destination folder"]`
 
-# Compiling
+## Compiling
 - Clone the repo
 - run `cargo build --release`
