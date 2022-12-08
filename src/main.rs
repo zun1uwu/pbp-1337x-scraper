@@ -8,7 +8,9 @@ use std::{
     path::Path,
 };
 
-fn    let arg    let args: Vec<String> = env::args().collect();
+fn main() {
+    
+    let args: Vec<String> = env::args().collect();
 
     if args.len() < 2 {
         println!(
@@ -137,20 +139,15 @@ fn scan_page(url: String, dest_dir: &Path, loopcount: u8) {
 }
 
 fn write_to_json(dest_dir: &Path, jsoncontent: String) {
-    );
-
-   let file_path = Path::new(&file_string);
+    let dir_string = dest_dir;
+    let dir_path = Path::new(&dir_string);
+    let file_string = format!(r"{}\1337x_Cache.json", dir_path.display());
+    let file_path = Path::new(&file_string);
 
     let mut file = fs::OpenOptions::new()
         .write(true)
         .append(true)
         .open(file_path)
-        .expect("Opening file failed");
-
-    file.write_all(jsoncontent.as_bytes())
-        .expect("Couldn't write bytes to file");
-}
-ile_path)
         .expect("Opening file failed");
 
     file.write_all(jsoncontent.as_bytes())
