@@ -8,12 +8,12 @@ use std::{
     path::Path,
 };
 
-fn main() {
-
-    let args: Vec<String> = env::args().collect();
+fn    let arg    let args: Vec<String> = env::args().collect();
 
     if args.len() < 2 {
-        println!(r#"You must provide a search query, e.g. "php_1337x_scraper [query] [destination folder]""#);
+        println!(
+            r#"You must provide a search query, e.g. "php_1337x_scraper [query] [destination folder]""#
+        );
         std::process::exit(0);
     }
 
@@ -39,11 +39,13 @@ fn main() {
         .open(filepath)
         .expect("Opening file failed");
 
-    file.write_all(br#"{
-    response: [
-"#)
-        .expect("Couldn't write bytes to file");
-    
+    file.write_all(
+        br#"{
+    "response": [
+"#,
+    )
+    .expect("Couldn't write bytes to file");
+
     let url = format!("https://1337x.to/category-search/{}/Games/1/", query);
 
     let body = reqwest::blocking::get(url)
@@ -65,43 +67,39 @@ fn main() {
         }
     }
 
+    let mut count = 0;
+
     for entry in results {
-        scan_page(entry, cachedir);
+        if count < 5 {
+            scan_page(entry, cachedir, 0);
+        } else {
+            scan_page(entry, cachedir, 1);
+        }
+
+        count += 1;
     }
 
-    file.write_all(br#"    ]
-}"#)
-        .expect("Couldn't write bytes to file");
+    file.write_all(
+        br#"    ]
+}"#,
+    )
+    .expect("Couldn't write bytes to file");
 }
 
-fn scan_page(url: String, dest_dir: &Path) {
+fn scan_page(url: String, dest_dir: &Path, loopcount: u8) {
     let body = reqwest::blocking::get(url)
         .expect("GET Request failed.")
         .text()
         .expect("Couldn't output HTML body as text.");
     let document = Html::parse_document(&body);
     let title_selector = Selector::parse(r#"h1"#).expect("Couldn't parse title");
-    let size_selector = Selector::parse(r#"ul > li > span"#).expect("Couldn't parse filesize");
     let magnet_selector = Selector::parse(r#"ul > li > a"#).expect("Couldn't parse magnets");
 
     let mut titles: Vec<String> = vec![];
-    let mut sizes: Vec<String> = vec![];
     let mut magnets: Vec<String> = vec![];
 
     for title in document.select(&title_selector) {
         titles.push(title.inner_html());
-    }
-
-    for size in document.select(&size_selector) {
-        if size.inner_html().contains("GB")
-            || size.inner_html().contains("MB")
-            || size.inner_html().contains("KB")
-        {
-            let html = size.inner_html();
-            let split: Vec<&str> = html.split('<').into_iter().collect();
-            let size = split[0];
-            sizes.push(size.to_string());
-        }
     }
 
     for magnet in document.select(&magnet_selector) {
@@ -117,24 +115,31 @@ fn scan_page(url: String, dest_dir: &Path) {
     }
 
     let title = &titles[0];
-    let size = &sizes[0];
     let magnet = &magnets[0];
 
-    write_to_json(title.to_string(), size.to_string(), magnet.to_string(), dest_dir);
-}
-
-fn write_to_json(title: String, size: String, magnet: String, dest_dir: &Path) {
-    println!("Caching: {}", title);
     let jsoncontent = format!(
-        r#"        {{ "title": "{}", "size": "{}", "download": "{}" }}
+        r#"        {{ "Title": "{}", "URL1": ["{}"], "URL2": [], "URL3": [], "URL4": [] }},
 "#,
-        title, size, magnet
+        title, magnet
+    );
+    let last_jsoncontent = format!(
+        r#"        {{ "Title": "{}", "URL1": ["{}"], "URL2": [], "URL3": [], "URL4": [] }}
+"#,
+        title, magnet
     );
 
-    let dir_string = dest_dir;
-    let dir_path = Path::new(&dir_string);
-    let file_string = format!(r"{}\1337x_Cache.json", dir_path.display());
-    let file_path = Path::new(&file_string);
+    println!("Caching: {}", title);
+    if loopcount == 0 {
+        write_to_json(dest_dir, jsoncontent);
+    } else {
+        write_to_json(dest_dir, last_jsoncontent);
+    }
+}
+
+fn write_to_json(dest_dir: &Path, jsoncontent: String) {
+    );
+
+   let file_path = Path::new(&file_string);
 
     let mut file = fs::OpenOptions::new()
         .write(true)
@@ -145,3 +150,10 @@ fn write_to_json(title: String, size: String, magnet: String, dest_dir: &Path) {
     file.write_all(jsoncontent.as_bytes())
         .expect("Couldn't write bytes to file");
 }
+ile_path)
+        .expect("Opening file failed");
+
+    file.write_all(jsoncontent.as_bytes())
+        .expect("Couldn't write bytes to file");
+}
+
