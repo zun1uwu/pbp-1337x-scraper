@@ -120,12 +120,12 @@ fn scan_page(url: String, dest_dir: &Path, loopcount: u8) {
     let magnet = &magnets[0];
 
     let jsoncontent = format!(
-        r#"        {{ "Title": "{}", "URL1": ["{}"], "URL2": [], "URL3": [], "URL4": [] }},
+        r#"        {{ "title": "{}", "url": ["{}"] }},
 "#,
         title, magnet
     );
     let last_jsoncontent = format!(
-        r#"        {{ "Title": "{}", "URL1": ["{}"], "URL2": [], "URL3": [], "URL4": [] }}
+        r#"        {{ "title": "{}", "url": ["{}"] }}
 "#,
         title, magnet
     );
