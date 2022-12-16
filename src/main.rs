@@ -24,7 +24,7 @@ fn main() {
 
     let cachestring = dest_dir.to_string();
     let cachedir = Path::new(&cachestring);
-    let filename = format!(r"{}\1337x_Cache.json", cachedir.display());
+    let filename = format!(r"{}\results.json", cachedir.display());
     let filepath = Path::new(&filename);
 
     if filepath.exists() {
