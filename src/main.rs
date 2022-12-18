@@ -141,7 +141,7 @@ fn scan_page(url: String, dest_dir: &Path, loopcount: u8) {
 fn write_to_json(dest_dir: &Path, jsoncontent: String) {
     let dir_string = dest_dir;
     let dir_path = Path::new(&dir_string);
-    let file_string = format!(r"{}\1337x_Cache.json", dir_path.display());
+    let file_string = format!(r"{}\results.json", dir_path.display());
     let file_path = Path::new(&file_string);
 
     let mut file = fs::OpenOptions::new()
